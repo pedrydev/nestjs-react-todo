@@ -32,3 +32,7 @@ Usé OpenCode con algunas skill globales propias. El flujo fue el siguiente
 4. Olvide que por defecto no hay una suite test en los proyectos de react, asi que segui con la creación de pruebas. Un verdadero disparate xq debe ser al revés pero bueno, cosas que pasan
 5. Dockerizar la solución
 6. Ajustes en el layout
+
+## Nota
+
+El último commit relacionado con la corrección del enum de estados fue error mío al especificarlos

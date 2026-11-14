@@ -1,122 +1,93 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
+import { useOptimistic, useState, useTransition } from 'react'
+import { getErrorMessage, updateTodoStatus } from './api'
+import { CreateTodoForm } from './components/CreateTodoForm'
+import { TodoFilters } from './components/TodoFilters'
+import { TodoList } from './components/TodoList'
+import { useTodos } from './hooks/useTodos'
+import { EMPTY_FILTERS, matchesFilters } from './types'
+import type { Todo, TodoFilters as Filters, TodoStatus } from './types'
 import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+interface StatusUpdate {
+  id: string
+  status: TodoStatus
 }
 
-export default App
+export default function App() {
+  const [filters, setFilters] = useState<Filters>({ ...EMPTY_FILTERS })
+  const { todos, loading, error, reload, upsert } = useTodos(filters)
+  const [actionError, setActionError] = useState<string | null>(null)
+  const [isPending, startTransition] = useTransition()
+
+  const [visibleTodos, applyOptimistic] = useOptimistic(
+    todos,
+    (current, update: StatusUpdate) =>
+      current
+        .map((todo) =>
+          todo.id === update.id ? { ...todo, status: update.status } : todo,
+        )
+        .filter((todo) => matchesFilters(todo, filters)),
+  )
+
+  function handleChangeStatus(todo: Todo, status: TodoStatus) {
+    setActionError(null)
+
+    startTransition(async () => {
+      applyOptimistic({ id: todo.id, status })
+
+      try {
+        const updated = await updateTodoStatus(todo.id, status)
+        upsert(updated)
+      } catch (cause) {
+        setActionError(getErrorMessage(cause))
+      }
+    })
+  }
+
+  return (
+    <div className="app">
+      <header className="app-header">
+        <div>
+          <p className="eyebrow">Todo management</p>
+          <h1>Keep the team in sync</h1>
+          <p className="subtitle">
+            Create todos, assign owners, and move work through the flow.
+          </p>
+        </div>
+      </header>
+
+      {actionError && (
+        <div className="feedback error banner" role="alert">
+          <span>{actionError}</span>
+          <button
+            className="button ghost small"
+            type="button"
+            onClick={() => setActionError(null)}
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
+
+      <main className="layout">
+        <aside className="sidebar">
+          <CreateTodoForm onCreated={upsert} />
+          <TodoFilters
+            filters={filters}
+            onApply={setFilters}
+            onClear={() => setFilters({ ...EMPTY_FILTERS })}
+          />
+        </aside>
+
+        <TodoList
+          todos={visibleTodos}
+          loading={loading}
+          error={error}
+          isPending={isPending}
+          onChangeStatus={handleChangeStatus}
+          onRetry={reload}
+        />
+      </main>
+    </div>
+  )
+}

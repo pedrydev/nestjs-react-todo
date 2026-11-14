@@ -69,12 +69,13 @@ Run from the relevant project folder.
 | frontend | `npm run dev`          | Vite dev server on :5173     |
 | frontend | `npm run build`        | Typecheck + production build |
 | frontend | `npm run lint`         | Lint                         |
+| frontend | `npm test`             | Unit tests                   |
 
 ## Verification
 
 Before considering a task done, run the relevant project's lint and tests, plus `npm run build`. Both projects must stay green:
 `backend`: `npm run lint && npm test && npm run test:e2e && npm run build`
-`frontend`: `npm run lint && npm run build`
+`frontend`: `npm run lint && npm test && npm run build`
 
 ## Conventions
 

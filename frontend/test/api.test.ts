@@ -11,7 +11,7 @@ import type { Todo } from '../src/types'
 const TODO: Todo = {
   id: 'todo-1',
   name: 'Write tests',
-  status: 'created',
+  status: 'pending',
   responsible: 'Ada',
 }
 
@@ -50,7 +50,7 @@ describe('listTodos', () => {
 
     await listTodos({
       name: '  write ',
-      status: 'completed',
+      status: 'done',
       responsible: ' Ada ',
     })
 
@@ -94,7 +94,7 @@ describe('updateTodoStatus', () => {
   it('patches the encoded id with the new status', async () => {
     fetchMock.mockResolvedValue(jsonResponse({ ...TODO, status: 'completed' }))
 
-    await updateTodoStatus('todo/1', 'completed')
+    await updateTodoStatus('todo/1', 'done')
 
     const [url, init] = fetchMock.mock.calls[0] ?? []
     expect(url).toBe('http://localhost:3000/todos/todo%2F1/status')
@@ -108,7 +108,7 @@ describe('error handling', () => {
     fetchMock.mockResolvedValue(new Response(null, { status: 204 }))
 
     await expect(
-      updateTodoStatus('todo-1', 'deleted'),
+      updateTodoStatus('todo-1', 'done'),
     ).resolves.toBeUndefined()
   })
 
@@ -125,7 +125,7 @@ describe('error handling', () => {
   it('uses a string message when present', async () => {
     fetchMock.mockResolvedValue(jsonResponse({ message: 'Not found' }, 404))
 
-    await expect(updateTodoStatus('missing', 'completed')).rejects.toMatchObject({
+    await expect(updateTodoStatus('missing', 'done')).rejects.toMatchObject({
       name: 'ApiError',
       status: 404,
       message: 'Not found',

@@ -1,7 +1,7 @@
 export enum TodoStatus {
-  Created = 'created',
-  Completed = 'completed',
-  Deleted = 'deleted',
+  Pending = 'pending',
+  Working = 'working',
+  Done = 'done',
 }
 
 export const TODO_STATUSES = Object.values(TodoStatus);

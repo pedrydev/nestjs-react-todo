@@ -15,7 +15,7 @@ const createTodoMock = vi.mocked(createTodo)
 const TODO: Todo = {
   id: 'todo-1',
   name: 'Write tests',
-  status: 'created',
+  status: 'pending',
   responsible: 'Ada',
 }
 

@@ -21,35 +21,33 @@ function TodoItem({ todo, onChangeStatus }: TodoItemProps) {
       <div className="todo-main">
         <p className="todo-name">
           <span>{todo.name}</span>
-          {todo.status !== 'created' && (
-            <span className={`badge badge-${todo.status}`}>
+          <span className={`badge badge-${todo.status}`}>
               {STATUS_LABELS[todo.status]}
             </span>
-          )}
         </p>
         <p className="todo-responsible">{todo.responsible}</p>
       </div>
 
       <div className="todo-actions">
-        {todo.status === 'created' && (
+        {todo.status === 'pending' && (
           <button
             className="button small"
             type="button"
-            onClick={() => onChangeStatus(todo, 'completed')}
-            aria-label={`Mark ${todo.name} as completed`}
+            onClick={() => onChangeStatus(todo, 'working')}
+            aria-label={`Mark ${todo.name} as working`}
           >
-            Complete
+            Start work
           </button>
         )}
 
-        {todo.status !== 'deleted' && (
+        {todo.status === 'working' && (
           <button
             className="button small danger"
             type="button"
-            onClick={() => onChangeStatus(todo, 'deleted')}
-            aria-label={`Delete ${todo.name}`}
+            onClick={() => onChangeStatus(todo, 'done')}
+            aria-label={`Complete ${todo.name}`}
           >
-            Delete
+            Complete
           </button>
         )}
       </div>

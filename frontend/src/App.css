@@ -323,12 +323,12 @@ h1 {
   color: var(--accent);
 }
 
-.badge-completed {
+.badge-working {
   background: var(--success-soft);
   color: var(--success);
 }
 
-.badge-deleted {
+.badge-done {
   background: var(--danger-soft);
   color: var(--danger);
 }

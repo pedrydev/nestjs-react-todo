@@ -23,7 +23,7 @@ export class TypeOrmTodosRepository implements TodosRepository {
   create(data: CreateTodoData): Promise<Todo> {
     const todo = this.repository.create({
       ...data,
-      status: TodoStatus.Created,
+      status: TodoStatus.Pending,
     });
     return this.repository.save(todo);
   }

@@ -1,4 +1,4 @@
-export const TODO_STATUSES = ['created', 'completed', 'deleted'] as const
+export const TODO_STATUSES = ['pending', 'working', 'done'] as const
 
 export type TodoStatus = (typeof TODO_STATUSES)[number]
 
@@ -27,9 +27,9 @@ export const EMPTY_FILTERS: TodoFilters = {
 }
 
 export const STATUS_LABELS: Record<TodoStatus, string> = {
-  created: 'Created',
-  completed: 'Completed',
-  deleted: 'Deleted',
+  pending: 'Pending',
+  working: 'Working',
+  done: 'Done',
 }
 
 export function matchesFilters(todo: Todo, filters: TodoFilters): boolean {

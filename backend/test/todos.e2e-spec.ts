@@ -34,7 +34,7 @@ describe('Todos (e2e)', () => {
   }
 
   describe('POST /todos', () => {
-    it('creates a todo with status created and trimmed values', async () => {
+    it('creates a todo with status pending and trimmed values', async () => {
       const response = await server()
         .post('/todos')
         .send({ name: '  Buy milk  ', responsible: '  Ana  ' })
@@ -43,7 +43,7 @@ describe('Todos (e2e)', () => {
       expect(response.body).toMatchObject({
         name: 'Buy milk',
         responsible: 'Ana',
-        status: TodoStatus.Created,
+        status: TodoStatus.Pending,
       });
       expect(response.body.id).toEqual(expect.any(String));
     });
@@ -65,7 +65,7 @@ describe('Todos (e2e)', () => {
     it('rejects a status in the create payload', async () => {
       await server()
         .post('/todos')
-        .send({ name: 'Buy milk', responsible: 'Ana', status: 'completed' })
+        .send({ name: 'Buy milk', responsible: 'Ana', status: 'done' })
         .expect(400);
     });
   });
@@ -82,7 +82,7 @@ describe('Todos (e2e)', () => {
         .expect(201);
       await server()
         .patch(`/todos/${walkDog.body.id}/status`)
-        .send({ status: 'completed' })
+        .send({ status: 'done' })
         .expect(200);
     });
 
@@ -107,9 +107,7 @@ describe('Todos (e2e)', () => {
     });
 
     it('filters by exact status', async () => {
-      const response = await server()
-        .get('/todos?status=completed')
-        .expect(200);
+      const response = await server().get('/todos?status=done').expect(200);
 
       expect(response.body).toHaveLength(1);
       expect(response.body[0].name).toBe('Walk dog');
@@ -117,7 +115,7 @@ describe('Todos (e2e)', () => {
 
     it('combines filters', async () => {
       const response = await server()
-        .get('/todos?name=dog&responsible=bob&status=completed')
+        .get('/todos?name=dog&responsible=bob&status=done')
         .expect(200);
 
       expect(response.body).toHaveLength(1);
@@ -138,12 +136,12 @@ describe('Todos (e2e)', () => {
 
       const response = await server()
         .patch(`/todos/${created.body.id}/status`)
-        .send({ status: 'deleted' })
+        .send({ status: 'done' })
         .expect(200);
 
       expect(response.body).toMatchObject({
         id: created.body.id,
-        status: TodoStatus.Deleted,
+        status: TodoStatus.Done,
       });
     });
 
@@ -162,14 +160,14 @@ describe('Todos (e2e)', () => {
     it('rejects a malformed id', async () => {
       await server()
         .patch('/todos/not-a-uuid/status')
-        .send({ status: 'completed' })
+        .send({ status: 'done' })
         .expect(400);
     });
 
     it('returns 404 for an id that does not exist', async () => {
       await server()
         .patch('/todos/00000000-0000-4000-8000-000000000000/status')
-        .send({ status: 'completed' })
+        .send({ status: 'done' })
         .expect(404);
     });
   });

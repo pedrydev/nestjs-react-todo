@@ -7,7 +7,7 @@ function todo(overrides: Partial<Todo> = {}): Todo {
   return {
     id: 'todo-1',
     name: 'Write tests',
-    status: 'created',
+    status: 'pending',
     responsible: 'Ada',
     ...overrides,
   }
@@ -60,8 +60,8 @@ describe('TodoList', () => {
     renderList({
       todos: [
         todo({ id: '1', name: 'Alpha', responsible: 'Ada' }),
-        todo({ id: '2', name: 'Beta', status: 'completed', responsible: 'Linus' }),
-        todo({ id: '3', name: 'Gamma', status: 'deleted', responsible: 'Grace' }),
+        todo({ id: '2', name: 'Beta', status: 'working', responsible: 'Linus' }),
+        todo({ id: '3', name: 'Gamma', status: 'done', responsible: 'Grace' }),
       ],
     })
 
@@ -77,8 +77,8 @@ describe('TodoList', () => {
     renderList({
       todos: [
         todo({ id: '1', name: 'Alpha', responsible: 'Ada' }),
-        todo({ id: '2', name: 'Beta', status: 'completed', responsible: 'Linus' }),
-        todo({ id: '3', name: 'Gamma', status: 'deleted', responsible: 'Grace' }),
+        todo({ id: '2', name: 'Beta', status: 'working', responsible: 'Linus' }),
+        todo({ id: '3', name: 'Gamma', status: 'done', responsible: 'Grace' }),
       ],
     })
 
@@ -98,7 +98,7 @@ describe('TodoList', () => {
   it('reports status changes with the todo and target status', () => {
     const onChangeStatus = vi.fn()
     const created = todo({ id: '1', name: 'Alpha' })
-    const completed = todo({ id: '2', name: 'Beta', status: 'completed' })
+    const completed = todo({ id: '2', name: 'Beta', status: 'done' })
 
     renderList({
       todos: [created, completed],

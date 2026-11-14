@@ -17,7 +17,7 @@ function todo(overrides: Partial<Todo> = {}): Todo {
   return {
     id: 'todo-1',
     name: 'Write tests',
-    status: 'created',
+    status: 'pending',
     responsible: 'Ada',
     ...overrides,
   }
@@ -51,7 +51,7 @@ describe('useTodos', () => {
 
     await waitFor(() => expect(listTodosMock).toHaveBeenCalledTimes(1))
 
-    rerender({ filters: { ...EMPTY, status: 'completed' } })
+    rerender({ filters: { ...EMPTY, status: 'done' } })
 
     await waitFor(() => expect(listTodosMock).toHaveBeenCalledTimes(2))
     expect(listTodosMock).toHaveBeenLastCalledWith(
@@ -129,7 +129,7 @@ describe('useTodos', () => {
     ])
 
     act(() => {
-      result.current.upsert(todo({ id: 'b', name: 'Beta', status: 'completed' }))
+      result.current.upsert(todo({ id: 'b', name: 'Beta', status: 'done' }))
     })
 
     expect(result.current.todos).toHaveLength(2)
@@ -140,13 +140,13 @@ describe('useTodos', () => {
 
   it('does not add upserted todos that do not match the active filters', async () => {
     listTodosMock.mockResolvedValue([])
-    const filters: TodoFilters = { ...EMPTY, status: 'completed' }
+    const filters: TodoFilters = { ...EMPTY, status: 'done' }
 
     const { result } = renderHook(() => useTodos(filters))
     await waitFor(() => expect(result.current.loading).toBe(false))
 
     act(() => {
-      result.current.upsert(todo({ status: 'created' }))
+      result.current.upsert(todo({ status: 'pending' }))
     })
 
     expect(result.current.todos).toEqual([])

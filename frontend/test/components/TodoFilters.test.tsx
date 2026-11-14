@@ -15,7 +15,7 @@ describe('TodoFilters', () => {
   it('initializes the draft from the provided filters', () => {
     render(
       <TodoFilters
-        filters={{ name: 'write', status: 'completed', responsible: 'Ada' }}
+        filters={{ name: 'write', status: 'done', responsible: 'Ada' }}
         onApply={vi.fn()}
         onClear={vi.fn()}
       />,
@@ -69,7 +69,7 @@ describe('TodoFilters', () => {
 
     render(
       <TodoFilters
-        filters={{ name: 'write', status: 'completed', responsible: 'Ada' }}
+        filters={{ name: 'write', status: 'done', responsible: 'Ada' }}
         onApply={vi.fn()}
         onClear={onClear}
       />,

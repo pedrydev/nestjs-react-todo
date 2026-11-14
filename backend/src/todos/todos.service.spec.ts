@@ -24,7 +24,7 @@ function todo(overrides: Partial<Todo> = {}): Todo {
   return {
     id: 'id-1',
     name: 'Task',
-    status: TodoStatus.Created,
+    status: TodoStatus.Pending,
     responsible: 'Ana',
     ...overrides,
   };
@@ -62,13 +62,13 @@ describe('TodosService', () => {
       await service.findAll({
         name: '  task  ',
         responsible: '   ',
-        status: TodoStatus.Completed,
+        status: TodoStatus.Working,
       });
 
       expect(mocks.findAll).toHaveBeenCalledWith({
         name: 'task',
         responsible: undefined,
-        status: TodoStatus.Completed,
+        status: TodoStatus.Working,
       });
     });
 
@@ -87,23 +87,20 @@ describe('TodosService', () => {
 
   describe('updateStatus', () => {
     it('returns the updated todo', async () => {
-      const updated = todo({ status: TodoStatus.Completed });
+      const updated = todo({ status: TodoStatus.Done });
       mocks.updateStatus.mockResolvedValue(updated);
 
       await expect(
-        service.updateStatus('id-1', TodoStatus.Completed),
+        service.updateStatus('id-1', TodoStatus.Done),
       ).resolves.toBe(updated);
-      expect(mocks.updateStatus).toHaveBeenCalledWith(
-        'id-1',
-        TodoStatus.Completed,
-      );
+      expect(mocks.updateStatus).toHaveBeenCalledWith('id-1', TodoStatus.Done);
     });
 
     it('throws NotFoundException when the todo does not exist', async () => {
       mocks.updateStatus.mockResolvedValue(null);
 
       await expect(
-        service.updateStatus('missing', TodoStatus.Deleted),
+        service.updateStatus('missing', TodoStatus.Done),
       ).rejects.toBeInstanceOf(NotFoundException);
     });
   });

@@ -9,7 +9,7 @@ export class Todo {
   @Column()
   name: string;
 
-  @Column({ type: 'enum', enum: TodoStatus, default: TodoStatus.Created })
+  @Column({ type: 'enum', enum: TodoStatus, default: TodoStatus.Pending })
   status: TodoStatus;
 
   @Column()

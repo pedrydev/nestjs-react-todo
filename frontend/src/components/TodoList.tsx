@@ -19,13 +19,16 @@ function TodoItem({ todo, onChangeStatus }: TodoItemProps) {
   return (
     <li className={`todo todo-${todo.status}`}>
       <div className="todo-main">
-        <p className="todo-name">{todo.name}</p>
+        <p className="todo-name">
+          <span>{todo.name}</span>
+          {todo.status !== 'created' && (
+            <span className={`badge badge-${todo.status}`}>
+              {STATUS_LABELS[todo.status]}
+            </span>
+          )}
+        </p>
         <p className="todo-responsible">{todo.responsible}</p>
       </div>
-
-      <span className={`badge badge-${todo.status}`}>
-        {STATUS_LABELS[todo.status]}
-      </span>
 
       <div className="todo-actions">
         {todo.status === 'created' && (

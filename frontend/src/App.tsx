@@ -70,23 +70,26 @@ export default function App() {
       )}
 
       <main className="layout">
-        <aside className="sidebar">
-          <CreateTodoForm onCreated={upsert} />
-          <TodoFilters
-            filters={filters}
-            onApply={setFilters}
-            onClear={() => setFilters({ ...EMPTY_FILTERS })}
-          />
-        </aside>
-
-        <TodoList
-          todos={visibleTodos}
-          loading={loading}
-          error={error}
-          isPending={isPending}
-          onChangeStatus={handleChangeStatus}
-          onRetry={reload}
+        <TodoFilters
+          filters={filters}
+          onApply={setFilters}
+          onClear={() => setFilters({ ...EMPTY_FILTERS })}
         />
+
+        <div className="content">
+          <TodoList
+            todos={visibleTodos}
+            loading={loading}
+            error={error}
+            isPending={isPending}
+            onChangeStatus={handleChangeStatus}
+            onRetry={reload}
+          />
+
+          <aside className="sidebar">
+            <CreateTodoForm onCreated={upsert} />
+          </aside>
+        </div>
       </main>
     </div>
   )

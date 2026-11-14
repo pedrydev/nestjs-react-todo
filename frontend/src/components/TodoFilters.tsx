@@ -36,7 +36,7 @@ export function TodoFilters({ filters, onApply, onClear }: TodoFiltersProps) {
   }
 
   return (
-    <form className="panel form" action={apply}>
+    <form className="panel form filters" action={apply}>
       <h2>Filter</h2>
 
       <label>
